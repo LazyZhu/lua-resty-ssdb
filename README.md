@@ -126,13 +126,11 @@ Similarly, the "SCAN" ssdb command accepts three arguments, then you should call
 
 For example, "SET", "GET", "SCAN", and "RSCAN" commands correspond to the methods "set", "get", "scan", and "rscan".
 
-All ssdb command methods returns a status reply and `nil` otherwise. In case of errors or failures, it will also return a second value which is a string describing the error.
+All ssdb command methods returns value(s) and `nil` otherwise. In case of errors or failures, it will also return a second value which is a string describing the error.
 
-A non-nil SSDB "bulk reply" results in a Lua string as the return value. A nil bulk reply results in a `ngx.null` return value.
+If SSDB only returns "status reply" value, then results in a string typed , such as `ok`, `not found`, etc. Otherwise SSDB results in a Lua table holding all the composing values (not include status).
 
-A non-nil SSDB "multi-bulk reply" results in a Lua table holding all the composing values (if any).
-
-A nil multi-bulk reply returns in a `ngx.null` value.
+A nil reply results in a `ngx.null` return value.
 
 See https://github.com/ideawu/ssdb/wiki/Commands for details regarding various SSDB reply types.
 
