@@ -322,6 +322,7 @@ Author
 ======
 
 LazyZhu (lazyzhu.com) <billfzhu@gmail.com>
+
 Yichun "agentzh" Zhang (章亦春) <agentzh@gmail.com>, CloudFlare Inc.
 
 Copyright and License
