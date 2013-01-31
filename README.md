@@ -120,9 +120,9 @@ The SSDB command arguments can be directly fed into the corresponding method cal
 
     local res, err = db:get("key")
 
-Similarly, the "SCAN" ssdb command accepts four arguments, then you should call the "scan" method like this:
+Similarly, the "SCAN" ssdb command accepts three arguments, then you should call the "scan" method like this:
 
-    local res, err = db:scan("key", "0", "z", "8")
+    local res, err = db:scan("0", "z", "8")
 
 For example, "SET", "GET", "SCAN", and "RSCAN" commands correspond to the methods "set", "get", "scan", and "rscan".
 
@@ -233,7 +233,7 @@ Adds new ssdb commands to the `resty.ssdb` class. Here is an example:
 
     db:set_timeout(1000) -- 1 sec
 
-    local ok, err = db:connect("127.0.0.1", 6379)
+    local ok, err = db:connect("127.0.0.1", 8888)
     if not ok then
         ngx.say("failed to connect: ", err)
         return
