@@ -12,14 +12,14 @@ end
 
 
 
-local ok, err = db:set("name", "none")
+local ok, err = db:set("age", "6")
 if not ok then
     ngx.say("failed to set: ", err)
     return
 end
-ngx.say("set requests: key=name&value=none, result: ", ok, "<br>")
+ngx.say("set requests: key=age&value=6, result: ", ok, "<br>")
 
-local res, err = db:get("name")
+local res, err = db:get("age")
 if not res then
     ngx.say("failed to get: ", err)
     return
@@ -28,50 +28,7 @@ if res == ngx.null then
     ngx.say("get not found.")
     return
 end
-ngx.say("get requests: key=name, result: ", res, "<br>")
-
-local ok, err = db:set("name", "LazyZhu")
-if not ok then
-    ngx.say("failed to set: ", err)
-    return
-end
-ngx.say("set requests: key=name&value=LazyZhu, result: ", ok, "<br>")
-
-local res, err = db:get("name")
-if not res then
-    ngx.say("failed to get: ", err)
-    return
-end
-if res == ngx.null then
-    ngx.say("get not found.")
-    return
-end
-ngx.say("get requests: key=name, result: ", res, "<br>")
-
-local ok, err = db:del("name")
-if not ok then
-    ngx.say("failed to del: ", err)
-    return
-end
-ngx.say("del requests: key=name, result: ", ok, "<br>")
-
-local res, err = db:get("name")
-if not res then
-    ngx.say("failed to get: ", err)
-    return
-end
-if res == ngx.null then
-    ngx.say("get not found.")
-    return
-end
-ngx.say("get requests: key=name, result: ", res, "<br>")
-
-local ok, err = db:del("name")
-if not ok then
-    ngx.say("failed to del: ", err)
-    return
-end
-ngx.say("del requests: key=name, result: ", ok, "<br><br>")
+ngx.say("get requests: key=age, result: ", res, "<br>")
 
 local ok, err = db:set("age", "8")
 if not ok then
@@ -135,7 +92,26 @@ if not ok then
     ngx.say("failed to del: ", err)
     return
 end
+ngx.say("del requests: key=age, result: ", ok, "<br>")
+
+local res, err = db:get("age")
+if not res then
+    ngx.say("failed to get: ", err)
+    return
+end
+if res == ngx.null then
+    ngx.say("get not found.")
+    return
+end
+ngx.say("get requests: key=age, result: ", res, "<br>")
+
+local ok, err = db:del("age")
+if not ok then
+    ngx.say("failed to del: ", err)
+    return
+end
 ngx.say("del requests: key=age, result: ", ok, "<br><br>")
+
 
 local ok, err = db:multi_set("age", "none", "name", "none", "domain", "none")
 if not ok then
@@ -842,6 +818,19 @@ end
 ngx.say("zlist requests: rule=0:z:5, result: ", res, "<br>")
 ngx.say("result to json string: ", cjson.encode(res), "<br><br>")
 
+local times = db:get_reused_times()
+ngx.say("reused times: ", times, "<br><br>")
+local ok, err = db:set_keepalive()
+if not ok then
+    ngx.say("failed to set keepalive: ", err)
+    return
+end
+local ok, err = db:connect("127.0.0.1", 8888)
+if not ok then
+    ngx.say("failed to connect: ", err)
+    return
+end
+
 local ok, err = db:init_pipeline()
 db:zdel("name", "LazyZhu")
 db:zdel("domain", "lazyzhu.com")
@@ -866,5 +855,8 @@ for i, res in ipairs(results) do
     end
 end
 ngx.say("result to json string: ", cjson.encode(results), "<br><br>")
+
+local times = db:get_reused_times()
+ngx.say("reused times: ", times, "<br><br>")
 
 local ok, err = db:close()
