@@ -20,7 +20,7 @@ This Lua library takes advantage of ngx_lua's cosocket API, which ensures
 
 Note that at least [ngx_lua 0.5.14](https://github.com/chaoslawful/lua-nginx-module/tags) or [ngx_openresty 1.2.1.14](http://openresty.org/#Download) is required.
 
-SSDB is an open source, advanced key-value store server based on leveldb database.
+SSDB is an open source, advanced key-value store server based on leveldb database:
 
 https://github.com/ideawu/ssdb
 
@@ -148,16 +148,14 @@ connect
 -------
 `syntax: ok, err = db:connect(host, port, options_table?)`
 
-`syntax: ok, err = db:connect("unix:/path/to/unix.sock", options_table?)`
-
-Attempts to connect to the remote host and port that the ssdb server is listening to or a local unix domain socket file listened by the ssdb server.
+Attempts to connect to the remote host and port that the ssdb server is listening to.
 
 Before actually resolving the host name and connecting to the remote backend, this method will always look up the connection pool for matched idle connections created by previous calls of this method.
 
 An optional Lua table can be specified as the last argument to this method to specify various connect options:
 
 * `pool`
-: Specifies a custom name for the connection pool being used. If omitted, then the connection pool name will be generated from the string template `<host>:<port>` or `<unix-socket-path>`.
+: Specifies a custom name for the connection pool being used. If omitted, then the connection pool name will be generated from the string template `<host>:<port>`.
 
 set_timeout
 ----------
