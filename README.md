@@ -20,6 +20,10 @@ This Lua library takes advantage of ngx_lua's cosocket API, which ensures
 
 Note that at least [ngx_lua 0.5.14](https://github.com/chaoslawful/lua-nginx-module/tags) or [ngx_openresty 1.2.1.14](http://openresty.org/#Download) is required.
 
+SSDB is an open source, advanced key-value store server based on leveldb database.
+
+https://github.com/ideawu/ssdb
+
 Synopsis
 ========
 
