@@ -1,3 +1,4 @@
+local say = ngx.say
 local cjson = require "cjson"
 local ssdb = require "resty.ssdb"
 local db = ssdb:new()
@@ -6,382 +7,320 @@ local ok, err = db:set_timeout(5000)
 
 local ok, err = db:connect("127.0.0.1", 8888)
 if not ok then
-    ngx.say("failed to connect: ", err)
+    say("failed to connect: ", err)
     return
 end
-
 
 
 local ok, err = db:set("age", "6")
 if not ok then
-    ngx.say("failed to set: ", err)
+    say("failed to set: ", err)
     return
 end
-ngx.say("set requests: key=age&value=6, result: ", ok, "<br>")
-
-local res, err = db:get("age")
-if not res then
-    ngx.say("failed to get: ", err)
-    return
-end
-if res == ngx.null then
-    ngx.say("get not found.")
-    return
-end
-ngx.say("get requests: key=age, result: ", res, "<br>")
+say("set requests: key=age&value=6, result: ", ok, "<br>")
 
 local ok, err = db:set("age", "8")
 if not ok then
-    ngx.say("failed to set: ", err)
+    say("failed to set: ", err)
     return
 end
-ngx.say("set requests: key=age&value=8, result: ", ok, "<br>")
+say("set requests: key=age&value=8, result: ", ok, "<br>")
 
 local res, err = db:get("age")
 if not res then
-    ngx.say("failed to get: ", err)
+    say("failed to get: ", err)
     return
 end
 if res == ngx.null then
-    ngx.say("get not found.")
+    say("get not found.")
     return
 end
-ngx.say("get requests: key=age, result: ", res, "<br>")
+say("get requests: key=age, result: ", res, "<br>")
 
 local ok, err = db:incr("age", "2")
 if not ok then
-    ngx.say("failed to incr: ", err)
+    say("failed to incr: ", err)
     return
 end
-ngx.say("incr requests: key=age&value=2, result: ", ok, "<br>")
+say("incr requests: key=age&value=2, result: ", ok, "<br>")
 
 local ok, err = db:incr("age", "-2")
 if not ok then
-    ngx.say("failed to incr: ", err)
+    say("failed to incr: ", err)
     return
 end
-ngx.say("incr requests: key=age&value=-2, result: ", ok, "<br>")
+say("incr requests: key=age&value=-2, result: ", ok, "<br>")
 
 local ok, err = db:decr("age", "2")
 if not ok then
-    ngx.say("failed to decr: ", err)
+    say("failed to decr: ", err)
     return
 end
-ngx.say("decr requests: key=age&value=2, result: ", ok, "<br>")
+say("decr requests: key=age&value=2, result: ", ok, "<br>")
 
 local ok, err = db:decr("age", "-2")
 if not ok then
-    ngx.say("failed to decr: ", err)
+    say("failed to decr: ", err)
     return
 end
-ngx.say("decr requests: key=age&value=-2, result: ", ok, "<br>")
+say("decr requests: key=age&value=-2, result: ", ok, "<br>")
 
 local res, err = db:get("age")
 if not res then
-    ngx.say("failed to get: ", err)
+    say("failed to get: ", err)
     return
 end
 if res == ngx.null then
-    ngx.say("get not found.")
+    say("get not found.")
     return
 end
-ngx.say("get requests: key=age, result: ", res, "<br>")
+say("get requests: key=age, result: ", res, "<br>")
 
 local ok, err = db:del("age")
 if not ok then
-    ngx.say("failed to del: ", err)
+    say("failed to del: ", err)
     return
 end
-ngx.say("del requests: key=age, result: ", ok, "<br>")
+say("del requests: key=age, result: ", ok, "<br>")
 
 local res, err = db:get("age")
 if not res then
-    ngx.say("failed to get: ", err)
+    say("failed to get: ", err)
     return
 end
 if res == ngx.null then
-    ngx.say("get not found.")
+    say("get not found.")
     return
 end
-ngx.say("get requests: key=age, result: ", res, "<br>")
+say("get requests: key=age, result: ", res, "<br>")
 
 local ok, err = db:del("age")
 if not ok then
-    ngx.say("failed to del: ", err)
+    say("failed to del: ", err)
     return
 end
-ngx.say("del requests: key=age, result: ", ok, "<br><br>")
+say("del requests: key=age, result: ", ok, "<br><br>")
 
 
 local ok, err = db:multi_set("age", "none", "name", "none", "domain", "none")
 if not ok then
-    ngx.say("failed to multi_set: ", err)
+    say("failed to multi_set: ", err)
     return
 end
-ngx.say("multi_set requests: key=age&value=none, key=name&value=none, key=domain&value=none, result: ", ok, "<br>")
-
-local res, err = db:multi_get("age", "name", "domain")
-if not res then
-    ngx.say("failed to multi_get: ", err)
-    return
-end
-if res == ngx.null then
-    ngx.say("multi_get not found.")
-    return
-end
-ngx.say("multi_get requests: key=age, key=name, key=domain, result: ", res, "<br>")
-ngx.say("result to json string: ", cjson.encode(res), "<br>")
-local h = db:array_to_hash(res)
-ngx.say("json hash-like string: ", cjson.encode(h), "<br>")
+say("multi_set requests: key=age&value=none, key=name&value=none, key=domain&value=none, result: ", ok, "<br>")
 
 local ok, err = db:multi_set("age", "8", "name", "LazyZhu", "domain", "lazyzhu.com")
 if not ok then
-    ngx.say("failed to multi_set: ", err)
+    say("failed to multi_set: ", err)
     return
 end
-ngx.say("multi_set requests: key=age&value=8, key=name&value=LazyZhu, key=domain&value=lazyzhu.com, result: ", ok, "<br>")
+say("multi_set requests: key=age&value=8, key=name&value=LazyZhu, key=domain&value=lazyzhu.com, result: ", ok, "<br>")
 
 local res, err = db:multi_get("age", "name", "domain")
 if not res then
-    ngx.say("failed to multi_get: ", err)
+    say("failed to multi_get: ", err)
     return
 end
 if res == ngx.null then
-    ngx.say("multi_get not found.")
+    say("multi_get not found.")
     return
 end
-ngx.say("multi_get requests: key=age, key=name, key=domain, result: ", res, "<br>")
-ngx.say("result to json string: ", cjson.encode(res), "<br>")
+say("multi_get requests: key=age, key=name, key=domain, result: ", res, "<br>")
+say("result to json string: ", cjson.encode(res), "<br>")
 local h = db:array_to_hash(res)
-ngx.say("json hash-like string: ", cjson.encode(h), "<br>")
+say("json hash-like string: ", cjson.encode(h), "<br>")
 
 local ok, err = db:multi_del("age", "name")
 if not ok then
-    ngx.say("failed to multi_del: ", err)
+    say("failed to multi_del: ", err)
     return
 end
-ngx.say("multi_del requests: key=age, key=name, result: ", ok, "<br>")
+say("multi_del requests: key=age, key=name, result: ", ok, "<br>")
 
 local res, err = db:multi_get("age", "name", "domain")
 if not res then
-    ngx.say("failed to multi_get: ", err)
+    say("failed to multi_get: ", err)
     return
 end
 if res == ngx.null then
-    ngx.say("multi_get not found.")
+    say("multi_get not found.")
     return
 end
-ngx.say("multi_get requests: key=age, key=name, key=domain, result: ", res, "<br>")
-ngx.say("result to json string: ", cjson.encode(res), "<br>")
+say("multi_get requests: key=age, key=name, key=domain, result: ", res, "<br>")
+say("result to json string: ", cjson.encode(res), "<br>")
 local h = db:array_to_hash(res)
-ngx.say("json hash-like string: ", cjson.encode(h), "<br>")
+say("json hash-like string: ", cjson.encode(h), "<br>")
 
 local ok, err = db:del("domain")
 if not ok then
-    ngx.say("failed to del: ", err)
+    say("failed to del: ", err)
     return
 end
-ngx.say("del requests: key=domain, result: ", ok, "<br>")
+say("del requests: key=domain, result: ", ok, "<br>")
 
 local res, err = db:multi_get("age", "name", "domain")
 if not res then
-    ngx.say("failed to multi_get: ", err)
+    say("failed to multi_get: ", err)
     return
 end
 if res == ngx.null then
-    ngx.say("multi_get not found.")
+    say("multi_get not found.")
     return
 end
-ngx.say("multi_get requests: key=age, key=name, key=domain, result: ", res, "<br>")
-ngx.say("result to json string: ", cjson.encode(res), "<br>")
+say("multi_get requests: key=age, key=name, key=domain, result: ", res, "<br>")
+say("result to json string: ", cjson.encode(res), "<br>")
 local h = db:array_to_hash(res)
-ngx.say("json hash-like string: ", cjson.encode(h), "<br>")
+say("json hash-like string: ", cjson.encode(h), "<br>")
 
 local ok, err = db:multi_del("age", "name", "domain")
 if not ok then
-    ngx.say("failed to multi_del: ", err)
+    say("failed to multi_del: ", err)
     return
 end
-ngx.say("multi_del requests: key=age, key=name, key=domain, result: ", ok, "<br><br>")
+say("multi_del requests: key=age, key=name, key=domain, result: ", ok, "<br><br>")
 
 local ok, err = db:multi_set("age", "8", "name", "LazyZhu", "domain", "lazyzhu.com")
 if not ok then
-    ngx.say("failed to multi_set: ", err)
+    say("failed to multi_set: ", err)
     return
 end
-ngx.say("multi_set requests: key=age&value=8, key=name&value=LazyZhu, key=domain&value=lazyzhu.com, result: ", ok, "<br>")
+say("multi_set requests: key=age&value=8, key=name&value=LazyZhu, key=domain&value=lazyzhu.com, result: ", ok, "<br>")
 
 local res, err = db:scan("0", "z", "5")
 if not res then
-    ngx.say("failed to scan: ", err)
+    say("failed to scan: ", err)
     return
 end
 if res == ngx.null then
-    ngx.say("scan not found.")
+    say("scan not found.")
     return
 end
-ngx.say("scan requests: rule=0:z:5, result: ", res, "<br>")
-ngx.say("result to json string: ", cjson.encode(res), "<br>")
+say("scan requests: rule=0:z:5, result: ", res, "<br>")
+say("result to json string: ", cjson.encode(res), "<br>")
 local h = db:array_to_hash(res)
-ngx.say("json hash-like string: ", cjson.encode(h), "<br>")
+say("json hash-like string: ", cjson.encode(h), "<br>")
 
 local res, err = db:rscan("z", "0", "5")
 if not res then
-    ngx.say("failed to rscan: ", err)
+    say("failed to rscan: ", err)
     return
 end
 if res == ngx.null then
-    ngx.say("rscan not found.")
+    say("rscan not found.")
     return
 end
-ngx.say("rscan requests: rule=z:0:5, result: ", res, "<br>")
-ngx.say("result to json string: ", cjson.encode(res), "<br>")
+say("rscan requests: rule=z:0:5, result: ", res, "<br>")
+say("result to json string: ", cjson.encode(res), "<br>")
 local h = db:array_to_hash(res)
-ngx.say("json hash-like string: ", cjson.encode(h), "<br>")
+say("json hash-like string: ", cjson.encode(h), "<br>")
 
 local res, err = db:keys("0", "z", "5")
 if not res then
-    ngx.say("failed to keys: ", err)
+    say("failed to keys: ", err)
     return
 end
 if res == ngx.null then
-    ngx.say("keys not found.")
+    say("keys not found.")
     return
 end
-ngx.say("keys requests: rule=0:z:5, result: ", res, "<br>")
-ngx.say("result to json string: ", cjson.encode(res), "<br>")
+say("keys requests: rule=0:z:5, result: ", res, "<br>")
+say("result to json string: ", cjson.encode(res), "<br>")
 
 local ok, err = db:multi_del("age", "name", "domain")
 if not ok then
-    ngx.say("failed to multi_del: ", err)
+    say("failed to multi_del: ", err)
     return
 end
-ngx.say("multi_del requests: key=age, key=name, key=domain, result: ", ok, "<br><br>")
+say("multi_del requests: key=age, key=name, key=domain, result: ", ok, "<br><br>")
 
-local ok, err = db:hset("personal", "name", "none")
+local ok, err = db:hset("personal", "age", "none")
 if not ok then
-    ngx.say("failed to hset: ", err)
+    say("failed to hset: ", err)
     return
 end
-ngx.say("hset requests: key=personal&field=name&value=none, result: ", ok, "<br>")
-
-local res, err = db:hget("personal", "name")
-if not res then
-    ngx.say("failed to hget: ", err)
-    return
-end
-if res == ngx.null then
-    ngx.say("hget not found.")
-    return
-end
-ngx.say("hget requests: key=personal&field=name, result: ", res, "<br>")
-
-local ok, err = db:hset("personal", "name", "LazyZhu")
-if not ok then
-    ngx.say("failed to hset: ", err)
-    return
-end
-ngx.say("hset requests: key=personal&field=name&value=LazyZhu, result: ", ok, "<br>")
-
-local res, err = db:hget("personal", "name")
-if not res then
-    ngx.say("failed to hget: ", err)
-    return
-end
-if res == ngx.null then
-    ngx.say("hget not found.")
-    return
-end
-ngx.say("hget requests: key=personal&field=name, result: ", res, "<br>")
-
-local ok, err = db:hdel("personal", "name")
-if not ok then
-    ngx.say("failed to hdel: ", err)
-    return
-end
-ngx.say("hdel requests: key=personal&field=name, result: ", ok, "<br>")
-
-local res, err = db:hget("personal", "name")
-if not res then
-    ngx.say("failed to hget: ", err)
-    return
-end
-if res == ngx.null then
-    ngx.say("hget not found.")
-    return
-end
-ngx.say("hget requests: key=personal&field=name, result: ", res, "<br>")
-
-local ok, err = db:hdel("personal", "name")
-if not ok then
-    ngx.say("failed to hdel: ", err)
-    return
-end
-ngx.say("hdel requests: key=personal&field=name, result: ", ok, "<br><br>")
+say("hset requests: key=personal&field=age&value=none, result: ", ok, "<br>")
 
 local ok, err = db:hset("personal", "age", "8")
 if not ok then
-    ngx.say("failed to hset: ", err)
+    say("failed to hset: ", err)
     return
 end
-ngx.say("hset requests: key=personal&field=age&value=8, result: ", ok, "<br>")
+say("hset requests: key=personal&field=age&value=8, result: ", ok, "<br>")
 
 local res, err = db:hget("personal", "age")
 if not res then
-    ngx.say("failed to hget: ", err)
+    say("failed to hget: ", err)
     return
 end
 if res == ngx.null then
-    ngx.say("hget not found.")
+    say("hget not found.")
     return
 end
-ngx.say("hget requests: key=personal&field=age, result: ", res, "<br>")
+say("hget requests: key=personal&field=age, result: ", res, "<br>")
 
 local ok, err = db:hincr("personal", "age", "2")
 if not ok then
-    ngx.say("failed to hincr: ", err)
+    say("failed to hincr: ", err)
     return
 end
-ngx.say("hincr requests: key=personal&field=age&value=2, result: ", ok, "<br>")
+say("hincr requests: key=personal&field=age&value=2, result: ", ok, "<br>")
 
 local ok, err = db:hincr("personal", "age", "-2")
 if not ok then
-    ngx.say("failed to hincr: ", err)
+    say("failed to hincr: ", err)
     return
 end
-ngx.say("hincr requests: key=personal&field=age&value=-2, result: ", ok, "<br>")
+say("hincr requests: key=personal&field=age&value=-2, result: ", ok, "<br>")
 
 local ok, err = db:hdecr("personal", "age", "2")
 if not ok then
-    ngx.say("failed to hdecr: ", err)
+    say("failed to hdecr: ", err)
     return
 end
-ngx.say("hdecr requests: key=personal&field=age&value=2, result: ", ok, "<br>")
+say("hdecr requests: key=personal&field=age&value=2, result: ", ok, "<br>")
 
 local ok, err = db:hdecr("personal", "age", "-2")
 if not ok then
-    ngx.say("failed to hdecr: ", err)
+    say("failed to hdecr: ", err)
     return
 end
-ngx.say("hdecr requests: key=personal&field=age&value=-2, result: ", ok, "<br>")
+say("hdecr requests: key=personal&field=age&value=-2, result: ", ok, "<br>")
 
 local res, err = db:hget("personal", "age")
 if not res then
-    ngx.say("failed to hget: ", err)
+    say("failed to hget: ", err)
     return
 end
 if res == ngx.null then
-    ngx.say("hget not found.")
+    say("hget not found.")
     return
 end
-ngx.say("hget requests: key=personal&field=age, result: ", res, "<br>")
+say("hget requests: key=personal&field=age, result: ", res, "<br>")
 
 local ok, err = db:hdel("personal", "age")
 if not ok then
-    ngx.say("failed to hdel: ", err)
+    say("failed to hdel: ", err)
     return
 end
-ngx.say("hdel requests: key=personal&field=age, result: ", ok, "<br><br>")
+say("hdel requests: key=personal&field=age, result: ", ok, "<br>")
+
+local res, err = db:hget("personal", "age")
+if not res then
+    say("failed to hget: ", err)
+    return
+end
+if res == ngx.null then
+    say("hget not found.")
+    return
+end
+say("hget requests: key=personal&field=age, result: ", res, "<br>")
+
+local ok, err = db:hdel("personal", "age")
+if not ok then
+    say("failed to hdel: ", err)
+    return
+end
+say("hdel requests: key=personal&field=age, result: ", ok, "<br><br>")
 
 local ok, err = db:init_pipeline()
 db:hset("public", "born", "CN")
@@ -390,112 +329,113 @@ db:hset("personal", "name", "LazyZhu")
 db:hset("personal", "domain", "lazyzhu.com")
 local results, err = db:commit_pipeline()
 if not results then
-    ngx.say("failed to commit the pipelined requests: ", err)
+    say("failed to commit the pipelined requests: ", err)
     return
 end
-ngx.say("pipeline requests: hset key=public&field=born&value=CN, hset key=personal&field=age&value=8, hset key=personal&field=name&value=LazyZhu, hset key=personal&field=domain&value=lazyzhu.com", "<br>")
+say("pipeline requests: hset key=public&field=born&value=CN, hset key=personal&field=age&value=8, hset key=personal&field=name&value=LazyZhu, hset key=personal&field=domain&value=lazyzhu.com", "<br>")
 for i, res in ipairs(results) do
     if type(res) == "table" then
         if not res[1] then
-            ngx.say("failed to run command ", i, ": ", res[2])
+            say("failed to run command ", i, ": ", res[2])
         else
             -- process the table value
-            ngx.say("pipeline command ", i, ", result: ", res, "<br>")
+            say("pipeline command ", i, ", result: ", res, "<br>")
         end
     else
         -- process the scalar value
-        ngx.say("pipeline command ", i, ", result: ", res, "<br>")
+        say("pipeline command ", i, ", result: ", res, "<br>")
     end
 end
-ngx.say("result to json string: ", cjson.encode(results), "<br>")
+say("result to json string: ", cjson.encode(results), "<br>")
 
 local ok, err = db:init_pipeline()
+db:hget("public", "born")
 db:hget("personal", "age")
 db:hget("personal", "name")
 db:hget("personal", "domain")
 local results, err = db:commit_pipeline()
 if not results then
-    ngx.say("failed to commit the pipelined requests: ", err)
+    say("failed to commit the pipelined requests: ", err)
     return
 end
-ngx.say("pipeline requests: hget key=personal&field=age, hget key=personal&field=name, hget key=personal&field=domain", "<br>")
+say("pipeline requests: hget key=public&field=born, hget key=personal&field=age, hget key=personal&field=name, hget key=personal&field=domain", "<br>")
 for i, res in ipairs(results) do
     if type(res) == "table" then
         if not res[1] then
-            ngx.say("failed to run command ", i, ": ", res[2])
+            say("failed to run command ", i, ": ", res[2])
         else
             -- process the table value
-            ngx.say("pipeline command ", i, ", result: ", res, "<br>")
+            say("pipeline command ", i, ", result: ", res, "<br>")
         end
     else
         -- process the scalar value
-        ngx.say("pipeline command ", i, ", result: ", res, "<br>")
+        say("pipeline command ", i, ", result: ", res, "<br>")
     end
 end
-ngx.say("result to json string: ", cjson.encode(results), "<br><br>")
+say("result to json string: ", cjson.encode(results), "<br><br>")
 
 local res, err = db:hscan("personal", "0", "z", "5")
 if not res then
-    ngx.say("failed to hscan: ", err)
+    say("failed to hscan: ", err)
     return
 end
 if res == ngx.null then
-    ngx.say("hscan not found.")
+    say("hscan not found.")
     return
 end
-ngx.say("hscan requests: key=personal&rule=0:z:5, result: ", res, "<br>")
-ngx.say("result to json string: ", cjson.encode(res), "<br>")
+say("hscan requests: key=personal&rule=0:z:5, result: ", res, "<br>")
+say("result to json string: ", cjson.encode(res), "<br>")
 local h = db:array_to_hash(res)
-ngx.say("json hash-like string: ", cjson.encode(h), "<br>")
+say("json hash-like string: ", cjson.encode(h), "<br>")
 
 local res, err = db:hrscan("personal", "z", "0", "5")
 if not res then
-    ngx.say("failed to hrscan: ", err)
+    say("failed to hrscan: ", err)
     return
 end
 if res == ngx.null then
-    ngx.say("hrscan not found.")
+    say("hrscan not found.")
     return
 end
-ngx.say("hrscan requests: key=personal&rule=z:0:5, result: ", res, "<br>")
-ngx.say("result to json string: ", cjson.encode(res), "<br>")
+say("hrscan requests: key=personal&rule=z:0:5, result: ", res, "<br>")
+say("result to json string: ", cjson.encode(res), "<br>")
 local h = db:array_to_hash(res)
-ngx.say("json hash-like string: ", cjson.encode(h), "<br>")
+say("json hash-like string: ", cjson.encode(h), "<br>")
 
 local res, err = db:hkeys("personal", "0", "z", "5")
 if not res then
-    ngx.say("failed to hkeys: ", err)
+    say("failed to hkeys: ", err)
     return
 end
 if res == ngx.null then
-    ngx.say("hkeys not found.")
+    say("hkeys not found.")
     return
 end
-ngx.say("hkeys requests: key=personal&rule=0:z:5, result: ", res, "<br>")
-ngx.say("result to json string: ", cjson.encode(res), "<br>")
+say("hkeys requests: key=personal&rule=0:z:5, result: ", res, "<br>")
+say("result to json string: ", cjson.encode(res), "<br>")
 
 local res, err = db:hsize("personal")
 if not res then
-    ngx.say("failed to hsize: ", err)
+    say("failed to hsize: ", err)
     return
 end
 if res == ngx.null then
-    ngx.say("hsize not found.")
+    say("hsize not found.")
     return
 end
-ngx.say("hsize requests: key=personal, result: ", res, "<br>")
+say("hsize requests: key=personal, result: ", res, "<br>")
 
 local res, err = db:hlist("0", "z", "5")
 if not res then
-    ngx.say("failed to hlist: ", err)
+    say("failed to hlist: ", err)
     return
 end
 if res == ngx.null then
-    ngx.say("hlist not found.")
+    say("hlist not found.")
     return
 end
-ngx.say("hlist requests: rule=0:z:5, result: ", res, "<br>")
-ngx.say("result to json string: ", cjson.encode(res), "<br><br>")
+say("hlist requests: rule=0:z:5, result: ", res, "<br>")
+say("result to json string: ", cjson.encode(res), "<br><br>")
 
 local ok, err = db:init_pipeline()
 db:hdel("personal", "age")
@@ -504,175 +444,139 @@ db:hdel("personal", "domain")
 db:hdel("public", "born")
 local results, err = db:commit_pipeline()
 if not results then
-    ngx.say("failed to commit the pipelined requests: ", err)
+    say("failed to commit the pipelined requests: ", err)
     return
 end
-ngx.say("pipeline requests: hdel key=personal&field=age, hdel key=personal&field=name, hdel key=personal&field=domain, hdel key=public&field=born&value=CN", "<br>")
+say("pipeline requests: hdel key=personal&field=age, hdel key=personal&field=name, hdel key=personal&field=domain, hdel key=public&field=born&value=CN", "<br>")
 for i, res in ipairs(results) do
     if type(res) == "table" then
         if not res[1] then
-            ngx.say("failed to run command ", i, ": ", res[2])
+            say("failed to run command ", i, ": ", res[2])
         else
             -- process the table value
-            ngx.say("pipeline command ", i, ", result: ", res, "<br>")
+            say("pipeline command ", i, ", result: ", res, "<br>")
         end
     else
         -- process the scalar value
-        ngx.say("pipeline command ", i, ", result: ", res, "<br>")
+        say("pipeline command ", i, ", result: ", res, "<br>")
     end
 end
-ngx.say("result to json string: ", cjson.encode(results), "<br><br>")
+say("result to json string: ", cjson.encode(results), "<br><br>")
 
-local ok, err = db:zset("name", "LazyZhu", "1")
+local ok, err = db:zset("age", "8", "2")
 if not ok then
-    ngx.say("failed to zset: ", err)
+    say("failed to zset: ", err)
     return
 end
-ngx.say("zset requests: key=name&member=LazyZhu&score=1, result: ", ok, "<br>")
-
-local res, err = db:zget("name", "LazyZhu")
-if not res then
-    ngx.say("failed to zget: ", err)
-    return
-end
-if res == ngx.null then
-    ngx.say("zget not found.")
-    return
-end
-ngx.say("zget requests: key=name&member=LazyZhu, result: ", res, "<br>")
-
-local ok, err = db:zset("name", "LazyZhu", "2")
-if not ok then
-    ngx.say("failed to zset: ", err)
-    return
-end
-ngx.say("zset requests: key=name&member=LazyZhu&score=2, result: ", ok, "<br>")
-
-local res, err = db:zget("name", "LazyZhu")
-if not res then
-    ngx.say("failed to zget: ", err)
-    return
-end
-if res == ngx.null then
-    ngx.say("zget not found.")
-    return
-end
-ngx.say("zget requests: key=name&member=LazyZhu, result: ", res, "<br>")
-
-local ok, err = db:zdel("name", "LazyZhu")
-if not ok then
-    ngx.say("failed to zdel: ", err)
-    return
-end
-ngx.say("zdel requests: key=name&member=LazyZhu, result: ", ok, "<br>")
-
-local res, err = db:zget("name", "LazyZhu")
-if not res then
-    ngx.say("failed to zget: ", err)
-    return
-end
-if res == ngx.null then
-    ngx.say("zget not found.")
-    return
-end
-ngx.say("zget requests: key=name&member=LazyZhu, result: ", res, "<br>")
-
-local ok, err = db:zdel("name", "LazyZhu")
-if not ok then
-    ngx.say("failed to zdel: ", err)
-    return
-end
-ngx.say("zdel requests: key=name&member=LazyZhu, result: ", ok, "<br><br>")
+say("zset requests: key=age&member=8&score=2, result: ", ok, "<br>")
 
 local ok, err = db:zset("age", "8", "1")
 if not ok then
-    ngx.say("failed to zset: ", err)
+    say("failed to zset: ", err)
     return
 end
-ngx.say("zset requests: key=age&member=8&score=1, result: ", ok, "<br>")
+say("zset requests: key=age&member=8&score=1, result: ", ok, "<br>")
 
 local res, err = db:zget("age", "8")
 if not res then
-    ngx.say("failed to zget: ", err)
+    say("failed to zget: ", err)
     return
 end
 if res == ngx.null then
-    ngx.say("zget not found.")
+    say("zget not found.")
     return
 end
-ngx.say("zget requests: key=age&member=8, result: ", res, "<br>")
+say("zget requests: key=age&member=8, result: ", res, "<br>")
 
 local ok, err = db:zincr("age", "8", "2")
 if not ok then
-    ngx.say("failed to zincr: ", err)
+    say("failed to zincr: ", err)
     return
 end
-ngx.say("zincr requests: key=age&member=8&score=2, result: ", ok, "<br>")
+say("zincr requests: key=age&member=8&score=2, result: ", ok, "<br>")
 
 local ok, err = db:zincr("age", "8", "-2")
 if not ok then
-    ngx.say("failed to zincr: ", err)
+    say("failed to zincr: ", err)
     return
 end
-ngx.say("zincr requests: key=age&member=8&score=-2, result: ", ok, "<br>")
+say("zincr requests: key=age&member=8&score=-2, result: ", ok, "<br>")
 
 local ok, err = db:zdecr("age", "8", "2")
 if not ok then
-    ngx.say("failed to zdecr: ", err)
+    say("failed to zdecr: ", err)
     return
 end
-ngx.say("zdecr requests: key=age&member=8&score=2, result: ", ok, "<br>")
+say("zdecr requests: key=age&member=8&score=2, result: ", ok, "<br>")
 
 local ok, err = db:zdecr("age", "8", "-2")
 if not ok then
-    ngx.say("failed to zdecr: ", err)
+    say("failed to zdecr: ", err)
     return
 end
-ngx.say("zdecr requests: key=age&member=8&score=-2, result: ", ok, "<br>")
+say("zdecr requests: key=age&member=8&score=-2, result: ", ok, "<br>")
 
 local res, err = db:zget("age", "8")
 if not res then
-    ngx.say("failed to zget: ", err)
+    say("failed to zget: ", err)
     return
 end
 if res == ngx.null then
-    ngx.say("zget not found.")
+    say("zget not found.")
     return
 end
-ngx.say("zget requests: key=age&member=8, result: ", res, "<br>")
+say("zget requests: key=age&member=8, result: ", res, "<br>")
 
 local ok, err = db:zdel("age", "8")
 if not ok then
-    ngx.say("failed to zdel: ", err)
+    say("failed to zdel: ", err)
     return
 end
-ngx.say("zdel requests: key=age&member=8, result: ", ok, "<br><br>")
+say("zdel requests: key=age&member=8, result: ", ok, "<br>")
+
+local res, err = db:zget("age", "8")
+if not res then
+    say("failed to zget: ", err)
+    return
+end
+if res == ngx.null then
+    say("zget not found.")
+    return
+end
+say("zget requests: key=age&member=8, result: ", res, "<br>")
+
+local ok, err = db:zdel("age", "8")
+if not ok then
+    say("failed to zdel: ", err)
+    return
+end
+say("zdel requests: key=age&member=8, result: ", ok, "<br><br>")
 
 local ok, err = db:init_pipeline()
-db:zset("name", "LazyZhu", "2")
 db:zset("name", "LazyZhu", "1")
+db:zset("name", "LazyZhu", "2")
 db:zset("domain", "lazyzhu.com", "1")
 db:zset("domain", "lazyzhu.net", "1")
 local results, err = db:commit_pipeline()
 if not results then
-    ngx.say("failed to commit the pipelined requests: ", err)
+    say("failed to commit the pipelined requests: ", err)
     return
 end
-ngx.say("pipeline requests: zset key=name&member=LazyZhu&score=2, zset key=name&member=LazyZhu&score=1, zset key=domain&member=lazyzhu.com&score=1, zset key=domain&member=lazyzhu.net&score=1", "<br>")
+say("pipeline requests: zset key=name&member=LazyZhu&score=1, zset key=name&member=LazyZhu&score=2, zset key=domain&member=lazyzhu.com&score=1, zset key=domain&member=lazyzhu.net&score=1", "<br>")
 for i, res in ipairs(results) do
     if type(res) == "table" then
         if not res[1] then
-            ngx.say("failed to run command ", i, ": ", res[2])
+            say("failed to run command ", i, ": ", res[2])
         else
             -- process the table value
-            ngx.say("pipeline command ", i, ", result: ", res, "<br>")
+            say("pipeline command ", i, ", result: ", res, "<br>")
         end
     else
         -- process the scalar value
-        ngx.say("pipeline command ", i, ", result: ", res, "<br>")
+        say("pipeline command ", i, ", result: ", res, "<br>")
     end
 end
-ngx.say("result to json string: ", cjson.encode(results), "<br>")
+say("result to json string: ", cjson.encode(results), "<br>")
 
 local ok, err = db:init_pipeline()
 db:zget("name", "LazyZhu")
@@ -680,154 +584,140 @@ db:zget("domain", "lazyzhu.com")
 db:zget("domain", "lazyzhu.net")
 local results, err = db:commit_pipeline()
 if not results then
-    ngx.say("failed to commit the pipelined requests: ", err)
+    say("failed to commit the pipelined requests: ", err)
     return
 end
-ngx.say("pipeline requests: zget key=name&member=LazyZhu, zget key=domain&member=lazyzhu.com, zget key=domain&member=lazyzhu.net", "<br>")
+say("pipeline requests: zget key=name&member=LazyZhu, zget key=domain&member=lazyzhu.com, zget key=domain&member=lazyzhu.net", "<br>")
 for i, res in ipairs(results) do
     if type(res) == "table" then
         if not res[1] then
-            ngx.say("failed to run command ", i, ": ", res[2])
+            say("failed to run command ", i, ": ", res[2])
         else
             -- process the table value
-            ngx.say("pipeline command ", i, ", result: ", res, "<br>")
+            say("pipeline command ", i, ", result: ", res, "<br>")
         end
     else
         -- process the scalar value
-        ngx.say("pipeline command ", i, ", result: ", res, "<br>")
+        say("pipeline command ", i, ", result: ", res, "<br>")
     end
 end
-ngx.say("result to json string: ", cjson.encode(results), "<br><br>")
+say("result to json string: ", cjson.encode(results), "<br><br>")
 
 local res, err = db:zscan("domain", "", "0", "9", "5")
 if not res then
-    ngx.say("failed to zscan: ", err)
+    say("failed to zscan: ", err)
     return
 end
 if res == ngx.null then
-    ngx.say("zscan not found.")
+    say("zscan not found.")
     return
 end
-ngx.say("zscan requests: key=domain&member=&rule=0:9:5, result: ", res, "<br>")
-ngx.say("result to json string: ", cjson.encode(res), "<br>")
+say("zscan requests: key=domain&member=&rule=0:9:5, result: ", res, "<br>")
+say("result to json string: ", cjson.encode(res), "<br>")
 local h = db:array_to_hash(res)
-ngx.say("json hash-like string: ", cjson.encode(h), "<br>")
-
-local res, err = db:zscan("domain", "0", "1", "9", "5")
-if not res then
-    ngx.say("failed to zscan: ", err)
-    return
-end
-if res == ngx.null then
-    ngx.say("zscan not found.")
-    return
-end
-ngx.say("zscan requests: key=domain&member=0&rule=1:9:5, result: ", res, "<br>")
-ngx.say("result to json string: ", cjson.encode(res), "<br>")
-local h = db:array_to_hash(res)
-ngx.say("json hash-like string: ", cjson.encode(h), "<br>")
+say("json hash-like string: ", cjson.encode(h), "<br>")
 
 local res, err = db:zscan("domain", "lazyzhu.com", "1", "9", "5")
 if not res then
-    ngx.say("failed to zscan: ", err)
+    say("failed to zscan: ", err)
     return
 end
 if res == ngx.null then
-    ngx.say("zscan not found.")
+    say("zscan not found.")
     return
 end
-ngx.say("zscan requests: key=domain&member=lazyzhu.com&rule=1:9:5, result: ", res, "<br>")
-ngx.say("result to json string: ", cjson.encode(res), "<br>")
+say("zscan requests: key=domain&member=lazyzhu.com&rule=1:9:5, result: ", res, "<br>")
+say("result to json string: ", cjson.encode(res), "<br>")
 local h = db:array_to_hash(res)
-ngx.say("json hash-like string: ", cjson.encode(h), "<br>")
+say("json hash-like string: ", cjson.encode(h), "<br>")
 
 local res, err = db:zscan("domain", "lazyzhu.net", "1", "9", "5")
 if not res then
-    ngx.say("failed to zscan: ", err)
+    say("failed to zscan: ", err)
     return
 end
 if res == ngx.null then
-    ngx.say("zscan not found.")
+    say("zscan not found.")
     return
 end
-ngx.say("zscan requests: key=domain&member=lazyzhu.net&rule=1:9:5, result: ", res, "<br>")
-ngx.say("result to json string: ", cjson.encode(res), "<br>")
+say("zscan requests: key=domain&member=lazyzhu.net&rule=1:9:5, result: ", res, "<br>")
+say("result to json string: ", cjson.encode(res), "<br>")
 local h = db:array_to_hash(res)
-ngx.say("json hash-like string: ", cjson.encode(h), "<br>")
+say("json hash-like string: ", cjson.encode(h), "<br>")
 
 local res, err = db:zscan("domain", "z", "1", "9", "5")
 if not res then
-    ngx.say("failed to zscan: ", err)
+    say("failed to zscan: ", err)
     return
 end
 if res == ngx.null then
-    ngx.say("zscan not found.")
+    say("zscan not found.")
     return
 end
-ngx.say("zscan requests: key=domain&member=z&rule=1:9:5, result: ", res, "<br>")
-ngx.say("result to json string: ", cjson.encode(res), "<br>")
+say("zscan requests: key=domain&member=z&rule=1:9:5, result: ", res, "<br>")
+say("result to json string: ", cjson.encode(res), "<br>")
 local h = db:array_to_hash(res)
-ngx.say("json hash-like string: ", cjson.encode(h), "<br>")
+say("json hash-like string: ", cjson.encode(h), "<br>")
 
-local res, err = db:zrscan("domain", "lazyzhu.com", "9", "0", "5")
+local res, err = db:zrscan("domain", "lazyzhu.net", "9", "0", "5")
 if not res then
-    ngx.say("failed to zrscan: ", err)
+    say("failed to zrscan: ", err)
     return
 end
 if res == ngx.null then
-    ngx.say("zrscan not found.")
+    say("zrscan not found.")
     return
 end
-ngx.say("zrscan requests: key=domain&member=lazyzhu.com&rule=9:0:5, result: ", res, "<br>")
-ngx.say("result to json string: ", cjson.encode(res), "<br>")
+say("zrscan requests: key=domain&member=lazyzhu.net&rule=9:0:5, result: ", res, "<br>")
+say("result to json string: ", cjson.encode(res), "<br>")
 local h = db:array_to_hash(res)
-ngx.say("json hash-like string: ", cjson.encode(h), "<br>")
+say("json hash-like string: ", cjson.encode(h), "<br>")
 
 local res, err = db:zkeys("domain", "lazyzhu.com", "0", "9", "5")
 if not res then
-    ngx.say("failed to zkeys: ", err)
+    say("failed to zkeys: ", err)
     return
 end
 if res == ngx.null then
-    ngx.say("zkeys not found.")
+    say("zkeys not found.")
     return
 end
-ngx.say("zkeys requests: key=domain&member=lazyzhu.com&rule=0:9:5, result: ", res, "<br>")
-ngx.say("result to json string: ", cjson.encode(res), "<br>")
+say("zkeys requests: key=domain&member=lazyzhu.com&rule=0:9:5, result: ", res, "<br>")
+say("result to json string: ", cjson.encode(res), "<br>")
 
 local res, err = db:zsize("domain")
 if not res then
-    ngx.say("failed to zsize: ", err)
+    say("failed to zsize: ", err)
     return
 end
 if res == ngx.null then
-    ngx.say("zsize not found.")
+    say("zsize not found.")
     return
 end
-ngx.say("zsize requests: key=domain, result: ", res, "<br>")
+say("zsize requests: key=domain, result: ", res, "<br>")
 
 local res, err = db:zlist("0", "z", "5")
 if not res then
-    ngx.say("failed to zlist: ", err)
+    say("failed to zlist: ", err)
     return
 end
 if res == ngx.null then
-    ngx.say("zlist not found.")
+    say("zlist not found.")
     return
 end
-ngx.say("zlist requests: rule=0:z:5, result: ", res, "<br>")
-ngx.say("result to json string: ", cjson.encode(res), "<br><br>")
+say("zlist requests: rule=0:z:5, result: ", res, "<br>")
+say("result to json string: ", cjson.encode(res), "<br><br>")
 
 local times = db:get_reused_times()
-ngx.say("reused times: ", times, "<br><br>")
+say("reused times: ", times, "<br><br>")
 local ok, err = db:set_keepalive()
 if not ok then
-    ngx.say("failed to set keepalive: ", err)
+    say("failed to set keepalive: ", err)
     return
 end
 local ok, err = db:connect("127.0.0.1", 8888)
 if not ok then
-    ngx.say("failed to connect: ", err)
+    say("failed to connect: ", err)
     return
 end
 
@@ -837,26 +727,26 @@ db:zdel("domain", "lazyzhu.com")
 db:zdel("domain", "lazyzhu.net")
 local results, err = db:commit_pipeline()
 if not results then
-    ngx.say("failed to commit the pipelined requests: ", err)
+    say("failed to commit the pipelined requests: ", err)
     return
 end
-ngx.say("pipeline requests: zdel key=name&member=LazyZhu, zdel key=domain&member=lazyzhu.com, zdel key=domain&member=lazyzhu.net", "<br>")
+say("pipeline requests: zdel key=name&member=LazyZhu, zdel key=domain&member=lazyzhu.com, zdel key=domain&member=lazyzhu.net", "<br>")
 for i, res in ipairs(results) do
     if type(res) == "table" then
         if not res[1] then
-            ngx.say("failed to run command ", i, ": ", res[2])
+            say("failed to run command ", i, ": ", res[2])
         else
             -- process the table value
-            ngx.say("pipeline command ", i, ", result: ", res, "<br>")
+            say("pipeline command ", i, ", result: ", res, "<br>")
         end
     else
         -- process the scalar value
-        ngx.say("pipeline command ", i, ", result: ", res, "<br>")
+        say("pipeline command ", i, ", result: ", res, "<br>")
     end
 end
-ngx.say("result to json string: ", cjson.encode(results), "<br><br>")
+say("result to json string: ", cjson.encode(results), "<br><br>")
 
 local times = db:get_reused_times()
-ngx.say("reused times: ", times, "<br><br>")
+say("reused times: ", times, "<br><br>")
 
 local ok, err = db:close()
