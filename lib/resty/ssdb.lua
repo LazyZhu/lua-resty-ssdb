@@ -100,30 +100,33 @@ end
 
 
 local function _read_reply(sock)
-    local data_reader = sock:receiveuntil("\n\n", { inclusive = true })
-    if not data_reader then
-        return nil, err
-    end
+	local val = {}
 
-    local data, err = data_reader()
-    if not data then
-        return nil, err
-    end
+	while true do
+		-- read block size
+		local line, err, partial = sock:receive()
+		if not line or len(line)==0 then
+			-- packet end
+			break
+		end
+		local d_len = tonumber(line)
 
-    local val = {}
+		--local data, err, partial = sock:receive(d_len)
+		local data, err, partial = sock:receive(d_len)
+		insert(val, data);
 
-    for v in gmatch(data, "%d+\n([^\n]+)\n") do
-        insert(val, v)
-    end
+		-- ignore the trailing lf/crlf after block data
+		local line, err, partial = sock:receive()
+	end
 
-    local v_num = tonumber(#val)
+	local v_num = tonumber(#val)
 
-    if v_num == 1 then
-        return val
-    else
-        remove(val,1)
-        return val
-    end
+	if v_num == 1 then
+		return val
+	else
+		remove(val,1)
+		return val
+	end
 end
 
 
