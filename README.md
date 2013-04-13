@@ -120,7 +120,11 @@ The SSDB command arguments can be directly fed into the corresponding method cal
 
     local res, err = db:get("key")
 
-Similarly, the "SCAN" ssdb command accepts three arguments, then you should call the "scan" method like this:
+Or, the "set" method with two arguments like this:
+
+    local res, err = db:set("key", "value")
+
+And, the "SCAN" ssdb command accepts three arguments, then you should call the "scan" method like this:
 
     local res, err = db:scan("0", "z", "8")
 

@@ -1,4 +1,5 @@
 -- Copyright (C) 2013 LazyZhu (lazyzhu.com)
+-- Copyright (C) 2013 IdeaWu (ideawu.com)
 -- Copyright (C) 2012 Yichun Zhang (agentzh)
 
 
@@ -19,21 +20,27 @@ local remove = table.remove
 
 module(...)
 
-_VERSION = '0.01'
+_VERSION = '0.02'
 
 local commands = {
-    "set",               "get",               "del",
-    "scan",              "rscan",             "keys",
-    "incr",              "decr",
-    "zset",              "zget",              "zdel",
-    "zscan",             "zrscan",            "zkeys",
-    "zsize",             "zlist",
-    "zincr",             "zdecr",
-    "hset",              "hget",              "hdel",
-    "hscan",             "hrscan",            "hkeys",
-    "hsize",             "hlist",
-    "hincr",             "hdecr",
-    "multi_set",         "multi_get",         "multi_del"
+    "set",                  "get",                 "del",
+    "scan",                 "rscan",               "keys",
+    "incr",                 "decr",                "exists",
+    "multi_set",            "multi_get",           "multi_del",
+    "multi_exists",
+    "hset",                 "hget",                "hdel",
+    "hscan",                "hrscan",              "hkeys",
+    "hincr",                "hdecr",               "hexists",
+    "hsize",                "hlist",
+    --[[ "multi_hset", ]]   "multi_hget",          "multi_hdel",
+    "multi_hexists",        "multi_hsize",
+    "zset",                 "zget",                "zdel",
+    "zscan",                "zrscan",              "zkeys",
+    "zincr",                "zdecr",               "zexists",
+    "zsize",                "zlist",
+    --[[ "multi_zset", ]]   "multi_zget",          "multi_zdel",
+    "multi_zexists",        "multi_zsize"
+
 }
 
 
@@ -100,30 +107,33 @@ end
 
 
 local function _read_reply(sock)
-    local data_reader = sock:receiveuntil("\n\n", { inclusive = true })
-    if not data_reader then
-        return nil, err
-    end
+	local val = {}
 
-    local data, err = data_reader()
-    if not data then
-        return nil, err
-    end
+	while true do
+		-- read block size
+		local line, err, partial = sock:receive()
+		if not line or len(line)==0 then
+			-- packet end
+			break
+		end
+		local d_len = tonumber(line)
 
-    local val = {}
+		-- read block data
+		local data, err, partial = sock:receive(d_len)
+		insert(val, data);
 
-    for v in gmatch(data, "%d+\n([^\n]+)\n") do
-        insert(val, v)
-    end
+		-- ignore the trailing lf/crlf after block data
+		local line, err, partial = sock:receive()
+	end
 
-    local v_num = tonumber(#val)
+	local v_num = tonumber(#val)
 
-    if v_num == 1 then
-        return val
-    else
-        remove(val,1)
-        return val
-    end
+	if v_num == 1 then
+		return val
+	else
+		remove(val,1)
+		return val
+	end
 end
 
 
@@ -186,8 +196,7 @@ for i = 1, #commands do
 end
 
 
---[=[
-function hmset(self, hashname, ...)
+function multi_hset(self, hashname, ...)
     local args = {...}
     if #args == 1 then
         local t = args[1]
@@ -197,13 +206,30 @@ function hmset(self, hashname, ...)
             insert(array, v)
         end
         -- print("key", hashname)
-        return _do_cmd(self, "hmset", hashname, unpack(array))
+        return _do_cmd(self, "multi_hset", hashname, unpack(array))
     end
 
     -- backwards compatibility
-    return _do_cmd(self, "hmset", hashname, ...)
+    return _do_cmd(self, "multi_hset", hashname, ...)
 end
---]=]
+
+
+function multi_zset(self, keyname, ...)
+    local args = {...}
+    if #args == 1 then
+        local t = args[1]
+        local array = {}
+        for k, v in pairs(t) do
+            insert(array, k)
+            insert(array, v)
+        end
+        -- print("key", keyname)
+        return _do_cmd(self, "multi_zset", keyname, unpack(array))
+    end
+
+    -- backwards compatibility
+    return _do_cmd(self, "multi_zset", keyname, ...)
+end
 
 
 function init_pipeline(self)
