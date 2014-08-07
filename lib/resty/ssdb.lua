@@ -26,6 +26,7 @@ local commands = {
     "set",                  "get",                 "del",
     "scan",                 "rscan",               "keys",
     "incr",                 "decr",                "exists",
+    "setx",
     "multi_set",            "multi_get",           "multi_del",
     "multi_exists",
     "hset",                 "hget",                "hdel",
