@@ -98,6 +98,7 @@ end
 
 local function _read_reply(sock)
 	local val = {}
+    local ret = nil
 
 	while true do
 		-- read block size
@@ -109,21 +110,25 @@ local function _read_reply(sock)
 		local d_len = tonumber(line)
 
 		-- read block data
-		local data, err, partial = sock:receive(d_len)
-		insert(val, data);
+		local data, err = sock:receive(d_len)
+        if not data then
+            return nil, err
+        end
+		insert(val, data)
 
-		-- ignore the trailing lf/crlf after block data
-		local line, err, partial = sock:receive()
+		local dummy, err = sock:receive(1) -- ignore LF
+        if not dummy then
+            return nil, err
+        end
 	end
 
-	local v_num = tonumber(#val)
+    if val[1] == 'not_found' then
+        ret = null
+    elseif val[1] == 'ok' and val[2] then
+        ret = val[2]
+    end
 
-	if v_num == 1 then
-		return val
-	else
-		remove(val,1)
-		return val
-	end
+    return ret
 end
 
 
