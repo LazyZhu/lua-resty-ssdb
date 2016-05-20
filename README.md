@@ -159,6 +159,12 @@ An optional Lua table can be specified as the last argument to this method to sp
 * `pool`
 : Specifies a custom name for the connection pool being used. If omitted, then the connection pool name will be generated from the string template `<host>:<port>`.
 
+connect with auth
+---
+`local ok, err = cache.connect(cache,host,port,auth);`
+
+Creates a ssdb object with auth. In case of failures, returns `nil` and a string describing the error.
+
 set_timeout
 ----------
 `syntax: db:set_timeout(time)`

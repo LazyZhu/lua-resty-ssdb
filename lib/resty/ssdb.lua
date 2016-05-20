@@ -27,7 +27,7 @@ local commands = {
     "scan",                 "rscan",               "keys",
     "incr",                 "decr",                "exists",
     "multi_set",            "multi_get",           "multi_del",
-    "multi_exists",
+    "multi_exists",         "auth",
     "hset",                 "hget",                "hdel",
     "hscan",                "hrscan",              "hkeys",
     "hincr",                "hdecr",               "hexists",
@@ -63,16 +63,6 @@ function set_timeout(self, timeout)
     end
 
     return sock:settimeout(timeout)
-end
-
-
-function connect(self, ...)
-    local sock = self.sock
-    if not sock then
-        return nil, "not initialized"
-    end
-
-    return sock:connect(...)
 end
 
 
@@ -195,6 +185,25 @@ for i = 1, #commands do
         end
 end
 
+function connect(self, host, port, auth, ...)
+    local sock = self.sock
+    if not sock then
+        return nil, "not initialized"
+    end
+    local ok, err = sock:connect(host, port)
+	if not ok then
+	    return nil, err
+	end
+	-- make auth
+	if auth then
+        local err = _do_cmd(self, "auth", auth)
+		if err and err[1] ~= '1'  then
+		    return nil, err[1]
+		end
+	end
+	return ok, err
+end
+
 
 function multi_hset(self, hashname, ...)
     local args = {...}
@@ -311,4 +320,3 @@ end
 
 
 setmetatable(_M, class_mt)
-
