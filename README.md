@@ -1,4 +1,6 @@
-IMWR changed:
+IMWR changed
+====
+
 + 添加快捷连接鉴权 cache.connect(cache,host,port,auth);
 + Meger moonbingbing/master 优化 _read_reply() 返回
 
