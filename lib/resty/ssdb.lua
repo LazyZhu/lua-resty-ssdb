@@ -124,7 +124,7 @@ local function _read_reply(sock)
 
     if val[1] == 'not_found' then
         ret = null
-    elseif val[1] == 'ok' and val[2] then
+    elseif val[2] then
         ret = val[2]
     end
 
@@ -177,7 +177,7 @@ local function _do_cmd(self, ...)
         return nil, err
     end
 
-    return _read_reply(sock)
+    return  _read_reply(sock)
 end
 
 
@@ -201,9 +201,14 @@ function connect(self, host, port, auth, ...)
 	end
 	-- make auth
 	if auth then
-        local err = _do_cmd(self, "auth", auth)
-		if err and err[1] ~= '1'  then
-		    return nil, err[1]
+        local req = {"4", "\n", "auth", "\n", len(auth), "\n", auth, "\n", "\n"}
+		local bytes, err = sock:send(req)
+		if not bytes then
+            return nil, err
+        end
+		local err = _read_reply(sock)
+        if err and err ~= '1'  then
+		    return nil, err
 		end
 	end
 	return ok, err

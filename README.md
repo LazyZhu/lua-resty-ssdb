@@ -2,8 +2,23 @@ IMWR changed
 ====
 
 + 添加快捷连接鉴权 cache.connect(cache,host,port,auth);
+
+```
+    local ok, err = cache.connect(cache, host, port, auth)
+    if not ok then
+        -- connect error string, eg: "timeout"、"bad port number"、"invalid password" ...
+        -- ngx.say(err)
+    end
+```
 + Meger moonbingbing/master 优化 _read_reply() 返回
 
+```
+    local result = cache:get(key)
+    if result == ngx.null then
+        -- do something
+    end
+    ngx.say(result)
+```
 
 Name
 ====
