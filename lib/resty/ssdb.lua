@@ -27,7 +27,7 @@ local commands = {
     "scan",                 "rscan",               "keys",
     "incr",                 "decr",                "exists",
     "multi_set",            "multi_get",           "multi_del",
-    "multi_exists",
+    "multi_exists",         "auth",
     "hset",                 "hget",                "hdel",
     "hscan",                "hrscan",              "hkeys",
     "hincr",                "hdecr",               "hexists",
@@ -66,16 +66,6 @@ function set_timeout(self, timeout)
 end
 
 
-function connect(self, ...)
-    local sock = self.sock
-    if not sock then
-        return nil, "not initialized"
-    end
-
-    return sock:connect(...)
-end
-
-
 function set_keepalive(self, ...)
     local sock = self.sock
     if not sock then
@@ -108,6 +98,7 @@ end
 
 local function _read_reply(sock)
 	local val = {}
+    local ret = nil
 
 	while true do
 		-- read block size
@@ -119,21 +110,25 @@ local function _read_reply(sock)
 		local d_len = tonumber(line)
 
 		-- read block data
-		local data, err, partial = sock:receive(d_len)
-		insert(val, data);
+		local data, err = sock:receive(d_len)
+        if not data then
+            return nil, err
+        end
+		insert(val, data)
 
-		-- ignore the trailing lf/crlf after block data
-		local line, err, partial = sock:receive()
+		local dummy, err = sock:receive(1) -- ignore LF
+        if not dummy then
+            return nil, err
+        end
 	end
 
-	local v_num = tonumber(#val)
+    if val[1] == 'not_found' then
+        ret = null
+    elseif val[2] then
+        ret = val[2]
+    end
 
-	if v_num == 1 then
-		return val
-	else
-		remove(val,1)
-		return val
-	end
+    return ret
 end
 
 
@@ -182,7 +177,7 @@ local function _do_cmd(self, ...)
         return nil, err
     end
 
-    return _read_reply(sock)
+    return  _read_reply(sock)
 end
 
 
@@ -193,6 +188,30 @@ for i = 1, #commands do
         function (self, ...)
             return _do_cmd(self, cmd, ...)
         end
+end
+
+function connect(self, host, port, auth, ...)
+    local sock = self.sock
+    if not sock then
+        return nil, "not initialized"
+    end
+    local ok, err = sock:connect(host, port)
+	if not ok then
+	    return nil, err
+	end
+	-- make auth
+	if auth then
+        local req = {"4", "\n", "auth", "\n", len(auth), "\n", auth, "\n", "\n"}
+		local bytes, err = sock:send(req)
+		if not bytes then
+            return nil, err
+        end
+		local err = _read_reply(sock)
+        if err and err ~= '1'  then
+		    return nil, err
+		end
+	end
+	return ok, err
 end
 
 
@@ -311,4 +330,3 @@ end
 
 
 setmetatable(_M, class_mt)
-

@@ -1,3 +1,25 @@
+IMWR changed
+====
+
++ 添加快捷连接鉴权 cache.connect(cache,host,port,auth);
+
+```
+    local ok, err = cache.connect(cache, host, port, auth)
+    if not ok then
+        -- connect error string, eg: "timeout"、"bad port number"、"invalid password" ...
+        -- ngx.say(err)
+    end
+```
++ Meger moonbingbing/master 优化 _read_reply() 返回
+
+```
+    local result = cache:get(key)
+    if result == ngx.null then
+        -- do something
+    end
+    ngx.say(result)
+```
+
 Name
 ====
 
@@ -158,6 +180,12 @@ An optional Lua table can be specified as the last argument to this method to sp
 
 * `pool`
 : Specifies a custom name for the connection pool being used. If omitted, then the connection pool name will be generated from the string template `<host>:<port>`.
+
+connect with auth
+---
+`local ok, err = cache.connect(cache,host,port,auth);`
+
+Creates a ssdb object with auth. In case of failures, returns `nil` and a string describing the error.
 
 set_timeout
 ----------
