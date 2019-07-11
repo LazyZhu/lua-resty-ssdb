@@ -6,7 +6,7 @@ lua-resty-ssdb - Lua ssdb client driver for the ngx_lua based on the cosocket AP
 Status
 ======
 
-This library is considedb production ready.
+This library is considered production ready.
 
 Description
 ===========
